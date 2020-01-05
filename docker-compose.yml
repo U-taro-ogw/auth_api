@@ -1,0 +1,24 @@
+version: '3'
+services:
+  app:
+    build: .
+    volumes:
+      - ./:/go/src/gin_todo
+    ports:
+      - "8083:8083"
+    environment:
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+
+  db:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    volumes:
+      - ./mysql/db_data:/var/lib/mysql
+      - ./mysql/my.conf:/etc/mysql/conf.d/my.conf
