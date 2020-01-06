@@ -28,8 +28,17 @@ func main() {
 
 		c.JSON(200, gin.H{"message": "signup"})
 	})
+
+
 	d.POST("/signin", func(c *gin.Context) {
-		c.JSON(200, gin.H{"message": "signin"})
+		var user User
+		var findUser User
+		c.BindJSON(&user)
+		if err := db.Where("email = ? AND password = ?", user.Email, user.Password).First(&findUser).Error; gorm.IsRecordNotFoundError(err) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "NotFound"})
+		} else {
+			c.JSON(http.StatusOK, gin.H{"message": "Find!!"})
+		}
 	})
 
 	d.Run(":8083")
