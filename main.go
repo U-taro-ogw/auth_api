@@ -14,32 +14,14 @@ func main() {
 
 	db := gormConnect()
 	defer db.Close()
+	dbHandler := DbHandler{
+		Db: db,
+	}
 
 	d := gin.Default()
-	d.POST("/signup", func(c *gin.Context) {
-		user := User{}
-		err := c.BindJSON(&user)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		}
+	d.POST("/signup", dbHandler.Signup)
 
-		db.NewRecord(user)
-		db.Create(&user)
-
-		c.JSON(200, gin.H{"message": "signup"})
-	})
-
-
-	d.POST("/signin", func(c *gin.Context) {
-		var user User
-		var findUser User
-		c.BindJSON(&user)
-		if err := db.Where("email = ? AND password = ?", user.Email, user.Password).First(&findUser).Error; gorm.IsRecordNotFoundError(err) {
-			c.JSON(http.StatusNotFound, gin.H{"error": "NotFound"})
-		} else {
-			c.JSON(http.StatusOK, gin.H{"message": "Find!!"})
-		}
-	})
+	d.POST("/signin", dbHandler.Signin)
 
 	d.Run(":8083")
 }
@@ -64,4 +46,32 @@ type User struct {
 	gorm.Model
 	Email string `json:"e-mail"`
 	Password string `json:"password"`
+}
+
+type DbHandler struct {
+	Db *gorm.DB
+}
+
+func (h *DbHandler) Signup(c *gin.Context) {
+	user := User{}
+	err := c.BindJSON(&user)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+
+	h.Db.NewRecord(user)
+	h.Db.Create(&user)
+
+	c.JSON(200, gin.H{"message": "signup"})
+}
+
+func (h *DbHandler) Signin(c *gin.Context) {
+	var user User
+	var findUser User
+	c.BindJSON(&user)
+	if err := h.Db.Where("email = ? AND password = ?", user.Email, user.Password).First(&findUser).Error; gorm.IsRecordNotFoundError(err) {
+		c.JSON(http.StatusNotFound, gin.H{"error": "NotFound"})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"message": "Find!!"})
+	}
 }
