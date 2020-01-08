@@ -6,7 +6,7 @@ import (
 	"github.com/U-taro-ogw/auth_api/src/handlers"
 	"github.com/gin-gonic/gin"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
-
+	"net/http"
 )
 
 func main() {
@@ -24,6 +24,11 @@ func main() {
 	d.POST("/signup", dbHandler.Signup)
 
 	d.POST("/signin", dbHandler.Signin)
+
+	d.GET("/redis", func(c *gin.Context) {
+		r := db.RedisConnect()
+		c.JSON(http.StatusOK, gin.H{"redis": db.Get("hoge", r)})
+	})
 
 	d.Run(":8083")
 }
