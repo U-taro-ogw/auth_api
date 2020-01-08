@@ -1,4 +1,4 @@
-module github.com/U-taro-ogw/gin_todo
+module github.com/U-taro-ogw/auth_api
 
 go 1.13
 
