@@ -21,7 +21,7 @@ func (h *UserHandler) Signup(c *gin.Context) {
 	h.Db.NewRecord(user)
 	h.Db.Create(&user)
 
-	c.JSON(200, gin.H{"message": "signup"})
+	c.JSON(http.StatusCreated, gin.H{"message": "signup"})
 }
 
 func (h *UserHandler) Signin(c *gin.Context) {
@@ -32,6 +32,7 @@ func (h *UserHandler) Signin(c *gin.Context) {
 	if err := h.Db.Where("email = ? AND password = ?", userParam.Email, userParam.Password).First(&findUser).Error; gorm.IsRecordNotFoundError(err) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "NotFound"})
 	} else {
+		// TODO jwtトークンの発行 -> redis保存 -> responseにjwtトークンを含める
 		c.JSON(http.StatusOK, gin.H{"message": "Find!!"})
 	}
 }
