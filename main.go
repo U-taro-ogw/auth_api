@@ -14,6 +14,9 @@ func main() {
 	fmt.Println("Hello, World!")
 
 	dbCon := db.DbConnect()
+	defer dbCon.Close()
+	dbCon.LogMode(true)
+
 	dbHandler := DbHandler{
 		Db: dbCon,
 	}
@@ -47,6 +50,10 @@ func (h *DbHandler) Signin(c *gin.Context) {
 	var user models.User
 	var findUser models.User
 	c.BindJSON(&user)
+	fmt.Println("-------------------------====>>>>>>>>>>>>>")
+	fmt.Println(user)
+	fmt.Println(h.Db.Where("email = ? AND password = ?", user.Email, user.Password))
+
 	if err := h.Db.Where("email = ? AND password = ?", user.Email, user.Password).First(&findUser).Error; gorm.IsRecordNotFoundError(err) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "NotFound"})
 	} else {

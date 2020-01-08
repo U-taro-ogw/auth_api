@@ -19,7 +19,5 @@ func DbConnect() *gorm.DB {
 	}
 	db.AutoMigrate(&models.User{})
 
-	defer db.Close()
-
 	return db
 }
