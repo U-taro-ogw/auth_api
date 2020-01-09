@@ -11,11 +11,3 @@ func RedisConnect() redis.Conn {
 	}
 	return c
 }
-
-func Get(key string, c redis.Conn) string {
-	res, err := redis.String(c.Do("GET", key))
-	if err != nil {
-		panic(err)
-	}
-	return res
-}
