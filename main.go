@@ -15,19 +15,20 @@ func main() {
 	dbCon := db.DbConnect()
 	defer dbCon.Close()
 	dbCon.LogMode(true)
-
 	dbHandler := handlers.UserHandler{
 		Db: dbCon,
 	}
 
+	redisCon := db.RedisConnect()
+	redisHandler := handlers.RedisHandler{
+		Redis: redisCon,
+	}
+
 	d := gin.Default()
 	d.POST("/signup", dbHandler.Signup)
-
 	d.POST("/signin", dbHandler.Signin)
-
 	d.GET("/redis", func(c *gin.Context) {
-		r := db.RedisConnect()
-		c.JSON(http.StatusOK, gin.H{"redis": db.Get("hoge", r)})
+		c.JSON(http.StatusOK, gin.H{"redis": redisHandler.Get("hoge")})
 	})
 
 	d.Run(":8083")
