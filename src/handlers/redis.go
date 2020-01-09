@@ -9,9 +9,10 @@ type RedisHandler struct {
 }
 
 func (h *RedisHandler) Get(key string) string {
-	res, err := redis.String(h.Redis.Do("GET", key))
-	if err != nil {
-		panic(err)
-	}
+	res, _ := redis.String(h.Redis.Do("GET", key))
 	return res
+}
+
+func (h *RedisHandler) Set(key, value string) {
+	h.Redis.Do("SET", key, value)
 }
