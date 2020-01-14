@@ -15,7 +15,7 @@ func main() {
 	dbCon := db.DbConnect()
 	defer dbCon.Close()
 	dbCon.LogMode(true)
-	dbHandler := handlers.UserHandler{
+	userHandler := handlers.UserHandler{
 		Db: dbCon,
 	}
 
@@ -25,11 +25,12 @@ func main() {
 	}
 
 	d := gin.Default()
-	d.POST("/signup", dbHandler.Signup)
-	d.POST("/signin", dbHandler.Signin)
+	d.POST("/signup", userHandler.Signup)
+	d.POST("/signin", userHandler.Signin)
 	d.GET("/redis", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"redis": redisHandler.Get("hoge")})
 	})
+	d.GET("/auth", handlers.GetTokenHandler)
 
 	d.Run(":8083")
 }
