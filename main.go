@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/U-taro-ogw/auth_api/src/db"
 	"github.com/U-taro-ogw/auth_api/src/handlers"
+	//"github.com/U-taro-ogw/auth_api/src/modules"
 	"github.com/gin-gonic/gin"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"net/http"
@@ -30,7 +31,7 @@ func main() {
 	d.GET("/redis", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"redis": redisHandler.Get("hoge")})
 	})
-	d.GET("/auth", handlers.GetTokenHandler)
+	//d.GET("/auth", modules.GetTokenHandler)
 
 	d.Run(":8083")
 }
