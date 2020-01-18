@@ -2,13 +2,16 @@ package handlers
 
 import (
 	"github.com/U-taro-ogw/auth_api/src/models"
+	"github.com/U-taro-ogw/auth_api/src/modules"
 	"github.com/gin-gonic/gin"
+	"github.com/gomodule/redigo/redis"
 	"github.com/jinzhu/gorm"
 	"net/http"
 )
 
 type UserHandler struct {
 	Db *gorm.DB
+	Redis redis.Conn
 }
 
 func (h *UserHandler) Signup(c *gin.Context) {
@@ -32,7 +35,9 @@ func (h *UserHandler) Signin(c *gin.Context) {
 	if err := h.Db.Where("email = ? AND password = ?", userParam.Email, userParam.Password).First(&findUser).Error; gorm.IsRecordNotFoundError(err) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "NotFound"})
 	} else {
-		// TODO jwtトークンの発行 -> redis保存 -> responseにjwtトークンを含める
-		c.JSON(http.StatusOK, gin.H{"message": "Find!!"})
+		jwtToken := modules.GetTokenHandler()
+
+		h.Redis.Do("SET", jwtToken, "111")
+		c.JSON(http.StatusOK, gin.H{"jwt": jwtToken})
 	}
 }
