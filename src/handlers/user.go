@@ -1,18 +1,17 @@
 package handlers
 
 import (
-	"github.com/U-taro-ogw/auth_api/src/db"
 	"github.com/U-taro-ogw/auth_api/src/models"
 	"github.com/U-taro-ogw/auth_api/src/modules"
 	"github.com/gin-gonic/gin"
+	"github.com/gomodule/redigo/redis"
 	"github.com/jinzhu/gorm"
 	"net/http"
-	//"fmt"
-	//"reflect"
 )
 
 type UserHandler struct {
 	Db *gorm.DB
+	Redis redis.Conn
 }
 
 func (h *UserHandler) Signup(c *gin.Context) {
@@ -38,10 +37,7 @@ func (h *UserHandler) Signin(c *gin.Context) {
 	} else {
 		jwtToken := modules.GetTokenHandler()
 
-		redisCon := db.RedisConnect()
-		redisHandler := RedisHandler{Redis: redisCon}
-		redisHandler.Set(jwtToken, "111")
-		// TODO jwtトークンの発行 -> redis保存 -> responseにjwtトークンを含める
+		h.Redis.Do("SET", jwtToken, "111")
 		c.JSON(http.StatusOK, gin.H{"jwt": jwtToken})
 	}
 }
