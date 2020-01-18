@@ -36,8 +36,7 @@ func (h *UserHandler) Signin(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"error": "NotFound"})
 	} else {
 		jwtToken := modules.GetTokenHandler()
-
-		h.Redis.Do("SET", jwtToken, "111")
+		modules.SetRedis(h.Redis, jwtToken, "111")
 		c.JSON(http.StatusOK, gin.H{"jwt": jwtToken})
 	}
 }
