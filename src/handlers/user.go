@@ -33,7 +33,7 @@ func (h *UserHandler) Signin(c *gin.Context) {
 	c.BindJSON(&userParam)
 
 	if err := h.Db.Where("email = ? AND password = ?", userParam.Email, userParam.Password).First(&findUser).Error; gorm.IsRecordNotFoundError(err) {
-		c.JSON(http.StatusNotFound, gin.H{"error": "NotFound"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 	} else {
 		jwtToken := modules.GetTokenHandler()
 		modules.SetRedis(h.Redis, jwtToken, "111")
