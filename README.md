@@ -1,17 +1,7 @@
 # auth_api
 - signin(認証)
 - jwt tokenを発行
-- jwt tokenはredisに保存(key: jwt_token value: 認可情報)
+- jwt tokenはredisに保存
 
-# redis
-- 課題1  
-  redisの扱い  
-  メソッドを生やすものか  
-  connectionを引数とした関数にするか
-  
-- 課題2  
-  UserHandler内でredisのconnectionを作成するのはおかしい。  
-  この辺をスマートにやりたい
-  
-- 課題3  
-  テストを書く
+## 用途
+他のAPIはrequest headerに付与されるjwt tokenを使ってredisから認可情報を取得する  
